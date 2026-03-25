@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
 from xgboost import XGBClassifier
@@ -21,7 +22,7 @@ print("ROC AUC Score:", roc_auc_score(y_test, y_pred_lm))
 
 # Train a Random Forest Classifier
 rf_classifier = RandomForestClassifier(
-    n_estimators=100, learning_rate=0.1, random_state=42)
+    n_estimators=100, random_state=42)
 rf_classifier.fit(X_train, y_train)
 
 # Evaluating the Random Forest with the test set
@@ -31,10 +32,28 @@ print("ROC AUC Score:", roc_auc_score(y_test, y_pred_rf))
 
 # Train the XGBoost Classifier
 xgb_classifier = XGBClassifier(
-    n_estimators=100, learning_rate=0.1, random_state=42, eval_metric='logloss')
+    n_estimators=100, random_state=42, learning_rate=0.1, eval_metric='logloss')
 xgb_classifier.fit(X_train, y_train)
 
 # Evaluating the XGBoost model with the test set
 y_pred_xgb = xgb_classifier.predict(X_test)
 print(classification_report(y_test, y_pred_xgb))
 print("ROC AUC Score:", roc_auc_score(y_test, y_pred_xgb))
+
+# Comparing the models based on their performance metrics
+results = pd.DataFrame({
+    'Model': ['Logistic Regression', 'Random Forest', 'XGBoost'],
+    'Accuracy': [roc_auc_score(y_test, y_pred_lm), roc_auc_score(y_test, y_pred_rf), roc_auc_score(y_test, y_pred_xgb)],
+    'Recall': [classification_report(y_test, y_pred_lm, output_dict=True)['1']['recall'],
+               classification_report(y_test, y_pred_rf, output_dict=True)[
+        '1']['recall'],
+        classification_report(y_test, y_pred_xgb, output_dict=True)['1']['recall']],
+    'F1': [classification_report(y_test, y_pred_lm, output_dict=True)['1']['f1-score'],
+           classification_report(y_test, y_pred_rf, output_dict=True)[
+        '1']['f1-score'],
+        classification_report(y_test, y_pred_xgb, output_dict=True)['1']['f1-score']]
+    'ROC-AUC': [roc_auc_score(y_test, y_pred_lm), roc_auc_score(y_test, y_pred_rf), roc_auc_score(y_test, y_pred_xgb)]
+
+})
+
+print(results.sort_values('Recall', ascending=False))
