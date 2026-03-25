@@ -1,9 +1,13 @@
 import numpy as np
 import pandas as pd
+import joblib
+from sklearn.base import accuracy_score
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
 from xgboost import XGBClassifier
 from sklearn.metrics import classification_report, roc_auc_score
+from sklearn.metrics import accuracy_score
+from joblib import dump
 
 
 X_train = np.load('X_train.npy')
@@ -43,7 +47,7 @@ print("ROC AUC Score:", roc_auc_score(y_test, y_pred_xgb))
 # Comparing the models based on their performance metrics
 results = pd.DataFrame({
     'Model': ['Logistic Regression', 'Random Forest', 'XGBoost'],
-    'Accuracy': [roc_auc_score(y_test, y_pred_lm), roc_auc_score(y_test, y_pred_rf), roc_auc_score(y_test, y_pred_xgb)],
+    'Accuracy': [accuracy_score(y_test, y_pred_lm), accuracy_score(y_test, y_pred_rf), accuracy_score(y_test, y_pred_xgb)],
     'Recall': [classification_report(y_test, y_pred_lm, output_dict=True)['1']['recall'],
                classification_report(y_test, y_pred_rf, output_dict=True)[
         '1']['recall'],
@@ -51,9 +55,13 @@ results = pd.DataFrame({
     'F1': [classification_report(y_test, y_pred_lm, output_dict=True)['1']['f1-score'],
            classification_report(y_test, y_pred_rf, output_dict=True)[
         '1']['f1-score'],
-        classification_report(y_test, y_pred_xgb, output_dict=True)['1']['f1-score']]
+        classification_report(y_test, y_pred_xgb, output_dict=True)['1']['f1-score']],
     'ROC-AUC': [roc_auc_score(y_test, y_pred_lm), roc_auc_score(y_test, y_pred_rf), roc_auc_score(y_test, y_pred_xgb)]
 
 })
 
 print(results.sort_values('Recall', ascending=False))
+
+# save the best model
+joblib.dump(best_model, 'model.pkl')
+print("Best model saved!")
