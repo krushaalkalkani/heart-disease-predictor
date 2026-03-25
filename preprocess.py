@@ -32,15 +32,15 @@ y = dataset['Heart Attack Risk']
 X_train, X_test, y_train, y_test = train_test_split(
     X, y, test_size=0.2, random_state=42, stratify=y)
 
-np.save('X_train.npy', X_train)
-np.save('X_test.npy', X_test)
-np.save('y_train.npy', y_train)
-np.save('y_test.npy', y_test)
-
 # Feature scaling
 sc = StandardScaler()
 X_train = sc.fit_transform(X_train)
 X_test = sc.transform(X_test)
+
+np.save('X_train.npy', X_train)
+np.save('X_test.npy', X_test)
+np.save('y_train.npy', y_train)
+np.save('y_test.npy', y_test)
 
 # Save the scaler for future use
 joblib.dump(sc, 'scaler.pkl')
