@@ -21,8 +21,12 @@ dataset.drop('Blood Pressure', axis=1, inplace=True)
 print(dataset['Sex'].unique())
 print(dataset['Diet'].unique())
 
-# Label encoding for sex and Diet variable
-ct = ColumnTransformer(transformers=[(
-    'encoder', OneHotEncoder(), ['Sex', 'Diet'])], remainder='passthrough')
-X = np.array(ct.fit_transform(dataset[['Sex', 'Diet']]))
-print(X)
+# Label encoding for sex
+dataset['Sex'] = dataset['Sex'].map({'Male': 0, 'Female': 1})
+
+# diet
+dataset = pd.get_dummies(
+    dataset, columns=['Diet'], drop_first=True, dtype=int, prefix='Diet')
+
+print(dataset.head())
+print(dataset.dtypes)
