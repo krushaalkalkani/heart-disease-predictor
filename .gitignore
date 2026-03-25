@@ -43,13 +43,11 @@ wheels/
 
 # Data
 data/
-*.csv
 *.xlsx
 *.json
 datasets/
 
 # Models
-*.pkl
 *.pickle
 *.h5
 *.joblib
