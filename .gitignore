@@ -68,3 +68,5 @@ htmlcov/
 
 *.pkl
 *.npy
+*.png
+
