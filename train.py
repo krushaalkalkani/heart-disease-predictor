@@ -1,13 +1,11 @@
 import numpy as np
 import pandas as pd
 import joblib
-from sklearn.base import accuracy_score
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
 from xgboost import XGBClassifier
 from sklearn.metrics import classification_report, roc_auc_score
 from sklearn.metrics import accuracy_score
-from joblib import dump
 
 
 X_train = np.load('X_train.npy')
@@ -16,7 +14,8 @@ y_train = np.load('y_train.npy')
 y_test = np.load('y_test.npy')
 
 # Traing logistic model on the training set
-lm_classifier = LogisticRegression(max_iter=1000, random_state=42)
+lm_classifier = LogisticRegression(
+    max_iter=1000, random_state=42, class_weight='balanced')
 lm_classifier.fit(X_train, y_train)
 
 # Evaluating the model on the test set
@@ -26,7 +25,7 @@ print("ROC AUC Score:", roc_auc_score(y_test, y_pred_lm))
 
 # Train a Random Forest Classifier
 rf_classifier = RandomForestClassifier(
-    n_estimators=100, random_state=42)
+    n_estimators=100, random_state=42, class_weight='balanced')
 rf_classifier.fit(X_train, y_train)
 
 # Evaluating the Random Forest with the test set
@@ -35,8 +34,9 @@ print(classification_report(y_test, y_pred_rf))
 print("ROC AUC Score:", roc_auc_score(y_test, y_pred_rf))
 
 # Train the XGBoost Classifier
+scale = (y_train == 0).sum() / (y_train == 1).sum()
 xgb_classifier = XGBClassifier(
-    n_estimators=100, random_state=42, learning_rate=0.1, eval_metric='logloss')
+    n_estimators=100, random_state=42, learning_rate=0.1, eval_metric='logloss', scale_pos_weight=scale)
 xgb_classifier.fit(X_train, y_train)
 
 # Evaluating the XGBoost model with the test set
@@ -63,5 +63,6 @@ results = pd.DataFrame({
 print(results.sort_values('Recall', ascending=False))
 
 # save the best model
+best_model = xgb_classifier
 joblib.dump(best_model, 'model.pkl')
 print("Best model saved!")
