@@ -16,7 +16,7 @@ This was built as a complete end-to-end ML project — from raw data exploration
 
 ## Demo
 
-![App Screenshot](demo.png)
+![App Screenshot](./demo.png)
 
 ---
 
