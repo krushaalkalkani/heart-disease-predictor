@@ -2,6 +2,11 @@ import streamlit as st
 import numpy as np
 import joblib
 
+# import pandas as pd
+# df = pd.read_csv('heart_attack_prediction_dataset.csv')
+# print(df[df['Heart Attack Risk'] == 1].head(1).to_string())
+# print(df[df['Heart Attack Risk'] == 0].head(1).to_string())
+
 model = joblib.load('model.pkl')
 scaler = joblib.load('scaler.pkl')
 
