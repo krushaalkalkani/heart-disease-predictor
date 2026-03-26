@@ -44,3 +44,5 @@ np.save('y_test.npy', y_test)
 
 # Save the scaler for future use
 joblib.dump(sc, 'scaler.pkl')
+
+print(X.columns.tolist())
